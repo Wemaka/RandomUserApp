@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="M0 3v18h24V3H0z" android:strokeWidth="0.75" android:fillColor="#2e42a5" android:fillType="evenOdd"/>
+    <group>
+        <clip-path android:pathData="M0 3h13.5v10.5H0z"/>
+        <path android:pathData="M0 3h13.5v10.5H0z" android:strokeWidth="0.75" android:fillColor="#2e42a5"/>
+        <path android:pathData="M-1.503 12.75l2.97 1.303 12.101-9.635 1.567-1.936-3.177-0.435-4.935 4.152L3.05 8.996l-4.553 3.754z" android:strokeWidth="0.75" android:fillColor="#f7fcff"/>
+        <path android:pathData="M-1.097 13.663l1.513 0.756L14.572 2.3h-2.125L-1.096 13.663z" android:strokeWidth="0.75" android:fillColor="#f50100"/>
+        <path android:pathData="M15.003 12.75l-2.97 1.303-12.101-9.635-1.567-1.936 3.177-0.435 4.935 4.152 3.973 2.797 4.553 3.754z" android:strokeWidth="0.75" android:fillColor="#f7fcff"/>
+        <path android:pathData="M14.902 13.405l-1.513 0.756-6.027-5.188-1.787-0.579-7.359-5.906H0.34l7.355 5.766 1.954 0.695 5.253 4.457z" android:strokeWidth="0.75" android:fillColor="#f50100"/>
+        <path android:pathData="M7.489 3h-1.5v4.5H0V9h5.989v4.5h1.5V9H13.5V7.5H7.489V3z" android:strokeWidth="0.75" android:fillColor="#f50100" android:fillType="evenOdd"/>
+        <path android:pathData="M4.864 3h3.75v3.375H13.5v3.75H8.614L8.625 13.5h-3.75l-0.011-3.375H0v-3.75h4.864V3zm1.125 4.5H0V9h5.989v4.5h1.5V9H13.5V7.5H7.489V3h-1.5v4.5z" android:strokeWidth="0.75" android:fillColor="#f7fcff" android:fillType="evenOdd"/>
+    </group>
+    <path android:pathData="M6.75 18.375l-0.976 0.902 0.097-1.326-1.315-0.2 1.097-0.752-0.662-1.153 1.27 0.39L6.75 15l0.488 1.236 1.271-0.389-0.662 1.152 1.097 0.752-1.314 0.2 0.097 1.326-0.977-0.902zm9.75-5.625l-0.651 0.601 0.064-0.883-0.876-0.134 0.731-0.501-0.442-0.768 0.848 0.259L16.5 10.5l0.326 0.824 0.848-0.259-0.442 0.768 0.732 0.501-0.876 0.133 0.064 0.884L16.5 12.75zm1.5-6l-0.651 0.602 0.064-0.885-0.875-0.133 0.731-0.501-0.442-0.768 0.848 0.259L18 4.5l0.326 0.824 0.848-0.259-0.442 0.768 0.732 0.501-0.876 0.133 0.064 0.884L18 6.75zm3.75 3l-0.651 0.601 0.064-0.883-0.875-0.134 0.731-0.501-0.442-0.768 0.848 0.259L21.75 7.5l0.326 0.824 0.848-0.259-0.442 0.768 0.732 0.501-0.876 0.133 0.064 0.884L21.75 9.75zm-3 9.75l-0.651 0.601 0.064-0.883-0.875-0.134 0.731-0.501-0.442-0.768 0.848 0.259 0.325-0.824 0.326 0.824 0.848-0.259-0.442 0.768 0.732 0.501-0.876 0.133 0.064 0.884L18.75 19.5zm2.625-5.812l-0.661 0.347 0.126-0.736-0.535-0.521 0.739-0.108 0.331-0.67 0.33 0.67 0.74 0.107-0.535 0.522 0.127 0.737-0.661-0.348z" android:strokeWidth="0.75" android:fillColor="#f7fcff"/>
+</vector>
