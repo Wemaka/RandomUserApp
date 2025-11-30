@@ -32,7 +32,11 @@ enum class Nationality(
 
     companion object {
         fun fromCode(code: String): Nationality? {
-            return entries.find { it.code == code }
+            return entries.find { it.code.lowercase() == code.lowercase() }
+        }
+
+        fun fromName(name: String): Nationality? {
+            return entries.find { it.fullName.lowercase() == name.lowercase() }
         }
 
         fun getAllCodes(): List<String> {

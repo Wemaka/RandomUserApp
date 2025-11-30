@@ -134,7 +134,13 @@ fun CreateUserContent(
                 label = "Select Nationality :",
                 hint = "Nationality",
                 items = Nationality.getAllFullName(),
-                onSelect = { onAction(CreateUserAction.SelectNat(it)) },
+                onSelect = {
+                    onAction(
+                        CreateUserAction.SelectNat(
+                            Nationality.fromName(it)?.code ?: ""
+                        )
+                    )
+                },
                 value = state.nat
             )
 
