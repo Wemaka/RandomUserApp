@@ -31,7 +31,4 @@
 
 ## Demonstration
 
-https://github.com/user-attachments/assets/69e1ac53-89b4-45bc-a9b7-a934a0db716c
-
-
-
+https://github.com/user-attachments/assets/fb667cbc-d355-49af-99b5-a6e80b267047
