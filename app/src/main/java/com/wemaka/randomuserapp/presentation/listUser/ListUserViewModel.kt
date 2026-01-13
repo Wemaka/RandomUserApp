@@ -1,16 +1,16 @@
 package com.wemaka.randomuserapp.presentation.listUser
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wemaka.randomuserapp.domain.entity.UserEntity
+import com.wemaka.randomuserapp.data.model.User
 import com.wemaka.randomuserapp.domain.usecase.AddUser
 import com.wemaka.randomuserapp.domain.usecase.DeleteUser
 import com.wemaka.randomuserapp.domain.usecase.GetUsers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListUserViewModel(
@@ -18,17 +18,17 @@ class ListUserViewModel(
     private val addUser: AddUser,
     private val deleteUser: DeleteUser
 ) : ViewModel() {
-    var state by mutableStateOf(ListUserState())
-        private set
+    private val _state = MutableStateFlow(ListUserState())
+    val state = _state.asStateFlow()
 
-    private var recentlyDeletedUser: UserEntity? = null
+    private var recentlyDeletedUser: User? = null
 
     init {
         getUsers()
             .onEach { users ->
-                state = state.copy(
-                    usersList = users
-                )
+                _state.update {
+                    it.copy(usersList = users)
+                }
             }
             .launchIn(viewModelScope)
     }

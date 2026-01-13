@@ -1,29 +1,36 @@
 package com.wemaka.randomuserapp.data.repository
 
-import com.wemaka.randomuserapp.data.data_source.RandomUserAPI
-import com.wemaka.randomuserapp.data.data_source.UserDao
-import com.wemaka.randomuserapp.domain.entity.UserEntity
-import com.wemaka.randomuserapp.domain.model.Users
-import com.wemaka.randomuserapp.domain.repository.RandomUserRepo
-import com.wemaka.randomuserapp.domain.util.Resource
+import com.wemaka.randomuserapp.data.data_source.local.UserDao
+import com.wemaka.randomuserapp.data.data_source.remote.RandomUserAPI
+import com.wemaka.randomuserapp.data.util.toExternal
+import com.wemaka.randomuserapp.data.util.toLocal
+import com.wemaka.randomuserapp.data.model.User
+import com.wemaka.randomuserapp.data.util.Resource
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class RandomUserRepoImpl(
-    private val api: RandomUserAPI,
-    private val dao: UserDao
+    private val remote: RandomUserAPI,
+    private val local: UserDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : RandomUserRepo {
-    override suspend fun getRandomUser(
+    override suspend fun createRandomUser(
         results: Int,
         gender: String,
         nat: String
-    ): Resource<Users> {
+    ): Resource<List<User>> {
         return try {
             Resource.Success(
-                api.getRandomUser(
-                    results = results,
-                    gender = gender,
-                    nat = nat
-                )
+                withContext(dispatcher) {
+                    remote.createRandomUser(
+                        results = results,
+                        gender = gender,
+                        nat = nat
+                    ).remoteUsers.toExternal()
+                }
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -31,19 +38,23 @@ class RandomUserRepoImpl(
         }
     }
 
-    override fun getAllUsers(): Flow<List<UserEntity>> {
-        return dao.getAllUsers()
+    override fun getAllUsers(): Flow<List<User>> {
+        return local.getAllUsers().map { users ->
+            withContext(dispatcher) {
+                users.toExternal()
+            }
+        }
     }
 
-    override suspend fun getUserById(id: Int): UserEntity? {
-        return dao.getUserById(id)
+    override suspend fun getUserById(id: Int): User? {
+        return local.getUserById(id)?.toExternal()
     }
 
-    override suspend fun insertUser(user: UserEntity) {
-        dao.insertUser(user)
+    override suspend fun upsertUser(user: User) {
+        local.upsertUser(user.toLocal())
     }
 
-    override suspend fun deleteUser(user: UserEntity) {
-        dao.deleteUser(user)
+    override suspend fun deleteUser(user: User) {
+        local.deleteUser(user.toLocal())
     }
 }

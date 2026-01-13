@@ -1,24 +1,24 @@
 package com.wemaka.randomuserapp.presentation.createUser
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wemaka.randomuserapp.data.util.Resource
 import com.wemaka.randomuserapp.domain.usecase.AddUser
-import com.wemaka.randomuserapp.domain.usecase.GetRandomUsers
-import com.wemaka.randomuserapp.domain.util.Resource
+import com.wemaka.randomuserapp.domain.usecase.CreateRandomUsers
 import com.wemaka.randomuserapp.presentation.createUser.UiEvent.ShowSnackbar
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CreateUserViewModel(
     private val addUser: AddUser,
-    private val getRandomUsers: GetRandomUsers
+    private val createRandomUsers: CreateRandomUsers
 ) : ViewModel() {
-    var state by mutableStateOf(CreateUserState())
-        private set
+    private val _state = MutableStateFlow(CreateUserState())
+    val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -27,15 +27,15 @@ class CreateUserViewModel(
         when (action) {
             is CreateUserAction.GenerateUser -> {
                 viewModelScope.launch {
-                    val result = getRandomUsers(
-                        gender = state.gender,
-                        nat = state.nat
+                    val result = createRandomUsers(
+                        gender = _state.value.gender,
+                        nat = _state.value.nat
                     )
 
                     when (result) {
                         is Resource.Success -> {
-                            val users = result.data!!.users
-                            addUser(users[0])
+                            val users = result.data!!
+                            users.forEach { addUser(it) }
 
                             _eventFlow.emit(UiEvent.CreateUser)
                         }
@@ -48,11 +48,15 @@ class CreateUserViewModel(
             }
 
             is CreateUserAction.SelectGender -> {
-                state = state.copy(gender = action.gender)
+                _state.update {
+                    it.copy(gender = action.gender)
+                }
             }
 
             is CreateUserAction.SelectNat -> {
-                state = state.copy(nat = action.nat)
+                _state.update {
+                    it.copy(nat = action.nat)
+                }
             }
         }
     }

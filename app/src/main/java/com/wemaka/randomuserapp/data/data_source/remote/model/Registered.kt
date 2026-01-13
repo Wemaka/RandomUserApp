@@ -1,9 +1,9 @@
-package com.wemaka.randomuserapp.domain.model
+package com.wemaka.randomuserapp.data.data_source.remote.model
 
 
 import com.squareup.moshi.Json
 
-data class Dob(
+data class Registered(
     @field:Json(name = "age")
     val age: Int,
     @field:Json(name = "date")

@@ -1,4 +1,4 @@
-package com.wemaka.randomuserapp.domain.entity
+package com.wemaka.randomuserapp.data.data_source.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -26,8 +26,3 @@ data class UserEntity(
     val pictureUrl: String,
     val createdAt: Long = System.currentTimeMillis()
 )
-
-val UserEntity.fullName: String
-    get() = listOfNotNull(first, last)
-        .joinToString(" ")
-        .trim()

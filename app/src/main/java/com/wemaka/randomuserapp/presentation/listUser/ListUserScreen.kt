@@ -21,11 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -34,11 +31,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,11 +43,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.wemaka.randomuserapp.R
-import com.wemaka.randomuserapp.domain.entity.UserEntity
-import com.wemaka.randomuserapp.domain.entity.fullName
+import com.wemaka.randomuserapp.data.model.User
+import com.wemaka.randomuserapp.data.model.fullName
 import com.wemaka.randomuserapp.presentation.listUser.component.MinimalDropdownMenu
+import com.wemaka.randomuserapp.presentation.ui.theme.RandomUserAppTheme
 import com.wemaka.randomuserapp.presentation.util.Nationality
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -67,7 +63,7 @@ fun ListUserScreen(
     ListUserContent(
         onUserClick = onUserClick,
         onFloatingActionClick = onFloatingActionClick,
-        state = viewModel.state,
+        state = viewModel.state.collectAsStateWithLifecycle().value,
         onAction = viewModel::onAction
     )
 }
@@ -142,9 +138,9 @@ fun ListUserContent(
 
 @Composable
 fun LazyListCardUser(
-    list: List<UserEntity>,
+    list: List<User>,
     onUserClick: (Int) -> Unit,
-    onDelete: (UserEntity) -> Unit,
+    onDelete: (User) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -278,34 +274,37 @@ fun CardUser(
 @Preview
 @Composable
 fun ListUserContentPreview() {
-    ListUserContent(
-        onUserClick = {},
-        onFloatingActionClick = {},
-        state = ListUserState(
-            usersList = listOf(
-                UserEntity(
-                    1,
-                    "asl-fkj-i48",
-                    "Name",
-                    "",
-                    "",
-                    "email@gmail.com",
-                    "Male",
-                    "US",
-                    "+1 123 456 67 89",
-                    "",
-                    20,
-                    "",
-                    1,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
+    RandomUserAppTheme {
+        ListUserContent(
+            onUserClick = {},
+            onFloatingActionClick = {},
+            state = ListUserState(
+                usersList = listOf(
+                    User(
+                        1,
+                        "asl-fkj-i48",
+                        "Name",
+                        "",
+                        "",
+                        "email@gmail.com",
+                        "Male",
+                        "US",
+                        "+1 123 456 67 89",
+                        "",
+                        20,
+                        "",
+                        1,
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        1L
+                    )
                 )
-            )
-        ),
-        onAction = {}
-    )
+            ),
+            onAction = {}
+        )
+    }
 }

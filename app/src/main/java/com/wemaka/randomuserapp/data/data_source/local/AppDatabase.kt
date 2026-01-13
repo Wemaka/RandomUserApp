@@ -1,8 +1,8 @@
-package com.wemaka.randomuserapp.data.data_source
+package com.wemaka.randomuserapp.data.data_source.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.wemaka.randomuserapp.domain.entity.UserEntity
+import com.wemaka.randomuserapp.data.data_source.local.model.UserEntity
 
 @Database(
     entities = [UserEntity::class],

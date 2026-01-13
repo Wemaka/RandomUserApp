@@ -1,4 +1,4 @@
-package com.wemaka.randomuserapp
+package com.wemaka.randomuserapp.presentation
 
 import android.app.Application
 import com.wemaka.randomuserapp.di.appModule

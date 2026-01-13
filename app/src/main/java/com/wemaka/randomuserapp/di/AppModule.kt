@@ -1,15 +1,15 @@
 package com.wemaka.randomuserapp.di
 
 import androidx.room.Room
-import com.wemaka.randomuserapp.data.data_source.AppDatabase
-import com.wemaka.randomuserapp.data.data_source.RandomUserAPI
-import com.wemaka.randomuserapp.data.data_source.UserDao
+import com.wemaka.randomuserapp.data.data_source.local.AppDatabase
+import com.wemaka.randomuserapp.data.data_source.remote.RandomUserAPI
+import com.wemaka.randomuserapp.data.data_source.local.UserDao
 import com.wemaka.randomuserapp.data.repository.RandomUserRepoImpl
 import com.wemaka.randomuserapp.data.util.Constants.BASE_URL
-import com.wemaka.randomuserapp.domain.repository.RandomUserRepo
+import com.wemaka.randomuserapp.data.repository.RandomUserRepo
 import com.wemaka.randomuserapp.domain.usecase.AddUser
 import com.wemaka.randomuserapp.domain.usecase.DeleteUser
-import com.wemaka.randomuserapp.domain.usecase.GetRandomUsers
+import com.wemaka.randomuserapp.domain.usecase.CreateRandomUsers
 import com.wemaka.randomuserapp.domain.usecase.GetUser
 import com.wemaka.randomuserapp.domain.usecase.GetUsers
 import com.wemaka.randomuserapp.presentation.createUser.CreateUserViewModel
@@ -50,7 +50,7 @@ var appModule = module {
 
     singleOf(::AddUser)
     singleOf(::DeleteUser)
-    singleOf(::GetRandomUsers)
+    singleOf(::CreateRandomUsers)
     singleOf(::GetUser)
     singleOf(::GetUsers)
 

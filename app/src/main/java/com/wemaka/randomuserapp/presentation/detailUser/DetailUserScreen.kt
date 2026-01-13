@@ -1,12 +1,14 @@
 package com.wemaka.randomuserapp.presentation.detailUser
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,11 +17,11 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +37,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,18 +48,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.wemaka.randomuserapp.R
-import com.wemaka.randomuserapp.domain.entity.UserEntity
-import com.wemaka.randomuserapp.domain.entity.fullName
+import com.wemaka.randomuserapp.data.model.User
+import com.wemaka.randomuserapp.data.model.fullName
+import com.wemaka.randomuserapp.domain.model.InfoItem
 import com.wemaka.randomuserapp.presentation.detailUser.component.InfoTabContent
-import com.wemaka.randomuserapp.presentation.detailUser.component.TabInfoRow
+import com.wemaka.randomuserapp.presentation.ui.theme.RandomUserAppTheme
 import com.wemaka.randomuserapp.presentation.util.Nationality
 import org.koin.androidx.compose.koinViewModel
 
@@ -66,7 +73,7 @@ fun DetailUserScreen(
     viewModel: DetailUserViewModel = koinViewModel()
 ) {
     DetailUserContent(
-        state = viewModel.state,
+        state = viewModel.state.collectAsStateWithLifecycle().value,
         onBack = onBack
     )
 }
@@ -78,11 +85,33 @@ fun DetailUserContent(
     onBack: () -> Unit
 ) {
     val avatarSize = 120.dp
+    val focusManager = LocalFocusManager.current
+    var selectionEnabled by remember { mutableStateOf(true) }
+
+    BackHandler(enabled = selectionEnabled) {
+        selectionEnabled = false
+        focusManager.clearFocus()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            focusManager.clearFocus()
+            selectionEnabled = false
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        selectionEnabled = false
+                        focusManager.clearFocus()
+                    }
+                )
+            },
     ) {
         GradientTopAppBar(
             avatarSize = avatarSize,
@@ -109,6 +138,7 @@ fun GradientTopAppBar(
     modifier: Modifier = Modifier
 ) {
     var isError by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = modifier
@@ -132,7 +162,10 @@ fun GradientTopAppBar(
         )
 
         IconButton(
-            onClick = { onBack() },
+            onClick = {
+                focusManager.clearFocus()
+                onBack()
+            },
             modifier = Modifier
                 .padding(top = 12.dp, start = 12.dp)
                 .background(
@@ -143,7 +176,7 @@ fun GradientTopAppBar(
                 .size(40.dp)
         ) {
             Icon(
-                painterResource(id = R.drawable.ic_arrow_back_ios),
+                painter = painterResource(id = R.drawable.ic_arrow_back_ios),
                 contentDescription = "Back"
             )
         }
@@ -200,13 +233,17 @@ fun GradientTopAppBar(
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyMedium
         )
+
         Spacer(modifier = Modifier.height(2.dp))
+
         Text(
             text = "I`m",
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyMedium
         )
+
         Spacer(modifier = Modifier.height(4.dp))
+
         Text(
             text = name.toString(),
             color = MaterialTheme.colorScheme.primary,
@@ -218,7 +255,7 @@ fun GradientTopAppBar(
 
 @Composable
 fun CardUserInfo(
-    user: UserEntity?
+    user: User?
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs =
@@ -288,65 +325,63 @@ fun CardUserInfo(
 }
 
 @Composable
-fun UserTabContent(user: UserEntity?) {
-    InfoTabContent {
-        TabInfoRow("First name", user?.first ?: "—")
-        TabInfoRow("Last name", user?.last ?: "—")
-        TabInfoRow("Gender", user?.gender ?: "—")
-        TabInfoRow("Age", user?.age?.toString() ?: "—")
-        TabInfoRow("Date of birth", user?.dateOfBirth?.slice(0..9) ?: "—")
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TabInfoRow("Nationality", Nationality.fromCode(user?.nat.toString())?.fullName ?: "—")
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            Nationality.fromCode(user?.nat.toString())?.let {
-                Image(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(it.flagRes),
-                    contentDescription = it.fullName,
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
+fun UserTabContent(user: User?) {
+    InfoTabContent(
+        items = listOf(
+            InfoItem("First name", user?.first ?: "-"),
+            InfoItem("Last name", user?.last ?: "-"),
+            InfoItem("Gender", user?.gender ?: "-"),
+            InfoItem("Age", (user?.age ?: "-").toString()),
+            InfoItem("Date of birth", user?.dateOfBirth?.take(10) ?: "-"),
+            InfoItem(
+                title = "Nationality",
+                content = Nationality.fromCode(user?.nat.toString())?.fullName ?: "-",
+                iconRes = Nationality.fromCode(user?.nat.toString())?.flagRes
+            )
+        )
+    )
 }
 
 @Composable
-fun PhoneTabContent(user: UserEntity?) {
-    InfoTabContent {
-        TabInfoRow("Home phone", user?.homePhone ?: "—")
-        TabInfoRow("Cell phone", user?.cellPhone ?: "—")
-    }
+fun PhoneTabContent(user: User?) {
+    InfoTabContent(
+        items = listOf(
+            InfoItem("Home Phone", user?.homePhone ?: "-"),
+            InfoItem("Cell Phone", user?.cellPhone ?: "—")
+        )
+    )
 }
 
 @Composable
-fun MailTabContent(user: UserEntity?) {
-    InfoTabContent {
-        TabInfoRow("Email", user?.email ?: "—")
-    }
+fun MailTabContent(user: User?) {
+    InfoTabContent(
+        items = listOf(
+            InfoItem("Email", user?.email ?: "-")
+        )
+    )
 }
 
 @Composable
-fun LocationTabContent(user: UserEntity?) {
-    InfoTabContent {
-        TabInfoRow("Street number", (user?.streetNumber ?: "—").toString())
-        TabInfoRow("Street name", user?.streetName ?: "—")
-        TabInfoRow("City", user?.city ?: "—")
-        TabInfoRow("State", user?.state ?: "—")
-        TabInfoRow("Country", user?.country ?: "—")
-        TabInfoRow("Postcode", user?.postcode ?: "—")
-    }
+fun LocationTabContent(user: User?) {
+    InfoTabContent(
+        items = listOf(
+            InfoItem("Street number", (user?.streetNumber ?: "-").toString()),
+            InfoItem("Street name", (user?.streetName ?: "-").toString()),
+            InfoItem("City", (user?.city ?: "-").toString()),
+            InfoItem("State", (user?.state ?: "-").toString()),
+            InfoItem("Country", (user?.country ?: "-").toString()),
+            InfoItem("Postcode", (user?.postcode ?: "-").toString())
+        )
+    )
 }
 
 @Preview
 @Composable
 fun DetailUserContentPreview() {
-    DetailUserContent(
-        onBack = {},
-        state = DetailUserState(null)
-    )
+    RandomUserAppTheme {
+        DetailUserContent(
+            onBack = {},
+            state = DetailUserState(null)
+        )
+    }
 }

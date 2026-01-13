@@ -30,8 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wemaka.randomuserapp.R
 import com.wemaka.randomuserapp.presentation.createUser.component.LabeledDropdown
+import com.wemaka.randomuserapp.presentation.ui.theme.RandomUserAppTheme
 import com.wemaka.randomuserapp.presentation.util.Gender
 import com.wemaka.randomuserapp.presentation.util.Nationality
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,7 +51,7 @@ fun CreateUserScreen(
         onBack = onBack,
         onAction = viewModel::onAction,
         event = viewModel.eventFlow,
-        state = viewModel.state
+        state = viewModel.state.collectAsStateWithLifecycle().value
     )
 }
 
@@ -171,10 +173,12 @@ fun CreateUserContent(
 @Preview
 @Composable
 fun CreateUserContentPreview() {
-    CreateUserContent(
-        onBack = {},
-        onAction = {},
-        event = MutableSharedFlow(),
-        state = CreateUserState("", "")
-    )
+    RandomUserAppTheme {
+        CreateUserContent(
+            onBack = {},
+            onAction = {},
+            event = MutableSharedFlow(),
+            state = CreateUserState("", "")
+        )
+    }
 }

@@ -1,25 +1,25 @@
 package com.wemaka.randomuserapp.presentation.detailUser
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wemaka.randomuserapp.domain.usecase.GetUser
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DetailUserViewModel(
     private val userId: Int,
     private val getUser: GetUser
 ) : ViewModel() {
-    var state by mutableStateOf(DetailUserState())
-        private set
+    private val _state = MutableStateFlow(DetailUserState())
+    val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            state = state.copy(
-                user = getUser(userId)
-            )
+            _state.update {
+                it.copy(user = getUser(userId))
+            }
         }
     }
 }

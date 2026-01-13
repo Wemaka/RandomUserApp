@@ -1,7 +1,7 @@
 package com.wemaka.randomuserapp.presentation.detailUser
 
-import com.wemaka.randomuserapp.domain.entity.UserEntity
+import com.wemaka.randomuserapp.data.model.User
 
 data class DetailUserState(
-    val user: UserEntity? = null
+    val user: User? = null
 )
