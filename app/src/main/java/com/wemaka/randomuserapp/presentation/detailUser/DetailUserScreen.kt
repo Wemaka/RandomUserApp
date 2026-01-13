@@ -38,11 +38,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,12 +59,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.rememberNavBackStack
 import coil3.compose.SubcomposeAsyncImage
 import com.wemaka.randomuserapp.R
 import com.wemaka.randomuserapp.data.model.User
 import com.wemaka.randomuserapp.data.model.fullName
 import com.wemaka.randomuserapp.domain.model.InfoItem
 import com.wemaka.randomuserapp.presentation.detailUser.component.InfoTabContent
+import com.wemaka.randomuserapp.presentation.navigation.Screen
 import com.wemaka.randomuserapp.presentation.ui.theme.RandomUserAppTheme
 import com.wemaka.randomuserapp.presentation.util.Nationality
 import org.koin.androidx.compose.koinViewModel
@@ -86,17 +90,10 @@ fun DetailUserContent(
 ) {
     val avatarSize = 120.dp
     val focusManager = LocalFocusManager.current
-    var selectionEnabled by remember { mutableStateOf(true) }
-
-    BackHandler(enabled = selectionEnabled) {
-        selectionEnabled = false
-        focusManager.clearFocus()
-    }
 
     DisposableEffect(Unit) {
         onDispose {
             focusManager.clearFocus()
-            selectionEnabled = false
         }
     }
 
@@ -107,7 +104,6 @@ fun DetailUserContent(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        selectionEnabled = false
                         focusManager.clearFocus()
                     }
                 )
@@ -152,12 +148,13 @@ fun GradientTopAppBar(
             )
     ) {
         MediumTopAppBar(
-            modifier = Modifier.padding(start = 14.dp),
+            modifier = Modifier
+                .padding(start = 14.dp),
             title = {},
             navigationIcon = {},
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
-                scrolledContainerColor = MaterialTheme.colorScheme.primary
+                scrolledContainerColor = Color.Transparent
             )
         )
 

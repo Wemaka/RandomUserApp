@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,22 +58,23 @@ fun InfoTabContent(
     SelectionContainer {
         Column(
             modifier = modifier
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(20.dp)
         ) {
-            items.forEach { item ->
+            items.forEachIndexed { index, item ->
                 InfoRow(
                     title = item.title,
                     content = item.content,
                     iconRes = item.iconRes
                 )
+
+                if (index != items.size - 1) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
 
             if (items.isNotEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.BottomEnd
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     IconButton(
                         onClick = {
@@ -80,6 +83,8 @@ fun InfoTabContent(
                             }
                         },
                         modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .offset(x = 16.dp, y = 16.dp)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_content_copy),
